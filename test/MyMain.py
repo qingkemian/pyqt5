@@ -38,12 +38,23 @@ class Example(QMainWindow):
         btn1.clicked.connect(self.openfile)
         btn1.clicked.connect(self.creat_table_show)
 
-        hbox_open = hbox = QHBoxLayout()
+        hbox_open  = QHBoxLayout()
         hbox_open.addStretch(1)
         hbox_open.addWidget(btn1)
 
         ### 表格
         self.tableWidget = QTableWidget()
+
+        ### 文本框
+        textEdit = QTextEdit()
+        # textEdit.setMaximumHeight(500)
+        # textEdit.setMinimumHeight(200)
+
+
+        center_splitter_one = QSplitter(Qt.Vertical)
+        center_splitter_one.addWidget(self.tableWidget)
+        center_splitter_one.addWidget(textEdit)
+        center_splitter_one.setFixedHeight(600)
 
         ### 单选按钮1
         radio_one_layout = QHBoxLayout()
@@ -52,14 +63,18 @@ class Example(QMainWindow):
         label1.setText("抑郁与否")
         radio_one_layout.addWidget(label1)
 
-        self.button1 = QRadioButton('单选按钮1')
-        self.button1.setChecked(True)
-        self.button1.toggled.connect(self.buttonState)
-        radio_one_layout.addWidget(self.button1)
+        self.radio1 = QRadioButton('单选按钮1')
+        self.radio1.setChecked(True)
+        self.radio1.toggled.connect(self.buttonState)
+        radio_one_layout.addWidget(self.radio1)
 
-        self.button2 = QRadioButton('单选按钮2')
-        self.button2.toggled.connect(self.buttonState)
-        radio_one_layout.addWidget(self.button2)
+        self.radio2 = QRadioButton('单选按钮2')
+        self.radio2.toggled.connect(self.buttonState)
+        radio_one_layout.addWidget(self.radio2)
+
+        self.bg1 = QButtonGroup(self)
+        self.bg1.addButton(self.radio1,11)
+        self.bg1.addButton(self.radio2,12)
 
 
         ### 复选框
@@ -80,7 +95,8 @@ class Example(QMainWindow):
         self.checkBox3.setCheckState(Qt.PartiallyChecked)
         check_one_layout.addWidget(self.checkBox3)
 
-        textEdit = QTextEdit()
+        self.center_second_vbox = QVBoxLayout()
+
 
         ### 底部
         okButton = QPushButton("确定")
@@ -94,10 +110,10 @@ class Example(QMainWindow):
         vbox = QVBoxLayout()
         vbox.addStretch(0)
         vbox.addLayout(hbox_open)
-        vbox.addWidget(self.tableWidget)
-        vbox.addWidget(textEdit)
+        vbox.addWidget(center_splitter_one)
         vbox.addLayout(radio_one_layout)
         vbox.addLayout(check_one_layout)
+        vbox.addLayout(self.center_second_vbox)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
 
@@ -107,8 +123,8 @@ class Example(QMainWindow):
         # self.mdi = QMdiArea()
         self.setCentralWidget(self.mdi)
 
-        # 设置停靠控件1
-        self.items = QDockWidget('Project（别碰 软件会崩）', self)
+        # 设置——左侧——停靠控件1
+        self.pro_items = QDockWidget('Project（别碰 软件会崩）', self)
         self.listWidget = QListWidget()
         self.model = QFileSystemModel()
         self.model.setRootPath('')
@@ -119,50 +135,40 @@ class Example(QMainWindow):
         self.tree.setSortingEnabled(True)
         self.tree.setWindowTitle("Dir View")
 
-        self.items.setWidget(self.tree)
+        self.pro_items.setWidget(self.tree)
 
         # self.items.setFloating(True)
 
-        # self.addDockWidget(Qt.RightDockWidgetArea, self.items)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.pro_items)
 
-        # 设置停靠控件2
-        self.items2 = QDockWidget('添加单选', self)
-        # self.listWidget2 = QListWidget()
-        # self.listWidget2.addItem('item1')
-        # self.listWidget2.addItem('item2')
-        # self.listWidget2.addItem('item3')
+        # 设置——右侧——停靠控件1
+        self.docked2 = QDockWidget('添加单选', self)
 
-        self.tree_one = QTreeWidget()
+        btn_layout = QFormLayout()
+        self.button1 = QPushButton('获取列表中的选项')
+        self.button1.clicked.connect(self.getItem)
+        self.lineEdit1 = QLineEdit()
+        btn_layout.addRow(self.button1, self.lineEdit1)
 
-        self.tree_one.setColumnCount(2)
+        self.button2 = QPushButton('获取字符串')
+        self.button2.clicked.connect(self.getText)
+        self.lineEdit2 = QLineEdit()
+        btn_layout.addRow(self.button2, self.lineEdit2)
 
-        self.tree_one.setHeaderLabels(['Key', 'Value'])
+        self.button3 = QPushButton('获取整数')
+        self.button3.clicked.connect(self.getInt)
+        self.lineEdit3 = QLineEdit()
+        btn_layout.addRow(self.button3, self.lineEdit3)
 
-        root = QTreeWidgetItem(self.tree_one)
-        root.setText(0, 'root')
-        root.setText(1, '0')
+        self.button4 = QPushButton("创建单选按钮")
+        self.button4.clicked.connect(self.newRadio)
+        self.lineEdit4 = QLineEdit()
+        btn_layout.addRow(self.button4,self.lineEdit4)
 
-        child1 = QTreeWidgetItem(root)
-        child1.setText(0, 'child1')
-        child1.setText(1, '1')
-
-        child2 = QTreeWidgetItem(root)
-        child2.setText(0, 'child2')
-        child2.setText(1, '2')
-
-        child3 = QTreeWidgetItem(child2)
-        child3.setText(0, 'child3')
-        child3.setText(1, '3')
-        self.tree_one.clicked.connect(self.onTreeClicked)
-
-
-        self.items2.setWidget(self.tree_one)
-
-
-        self.items2.setMaximumHeight(200)
-
-        self.addDockWidget(Qt.RightDockWidgetArea, self.items2)
+        self.addDockWidget(Qt.RightDockWidgetArea,self.docked2)
+        self.dockedWidget2 = QWidget(self)
+        self.docked2.setWidget(self.dockedWidget2)
+        self.dockedWidget2.setLayout(btn_layout)
 
         # 设置窗口位置
         # self.setGeometry(300, 300, 350, 250)
@@ -237,12 +243,40 @@ class Example(QMainWindow):
         check3Status = self.checkBox3.text() + ', isChecked=' + str(self.checkBox3.isChecked()) + ',checkState=' + str(self.checkBox3.checkState()) + '\n'
         print(check1Status + check2Status + check3Status)
 
-    # 树事件
-    def onTreeClicked(self,index):
-        item = self.tree.currentItem()
-        print(index.row())
-        print('key=%s,value=%s' % (item.text(0),item.text(1)))
+    # 右侧停靠控件事件
+    def getItem(self):
+        items = ('C','C++','Ruby','Python','Java')
+        item, ok =QInputDialog.getItem(self,'请选择编程语言','语言列表',items)
+        if ok and item:
+            self.lineEdit1.setText(item)
+    def getText(self):
+        text, ok =QInputDialog.getText(self,'文本输入框','输入姓名')
+        if ok and text:
+            self.lineEdit2.setText(text)
+    def getInt(self):
+        num, ok =QInputDialog.getInt(self,'整数输入框','输入数字')
+        if ok and num:
+            self.lineEdit3.setText(str(num))
+    def newRadio(self):
+        radio_two_layout = QHBoxLayout()
 
+        label2 = QLabel()
+        label2.setText("add")
+        radio_two_layout.addWidget(label2)
+
+        self.radio3 = QRadioButton('add1')
+        self.radio3.setChecked(True)
+        radio_two_layout.addWidget(self.radio3)
+
+        self.radio4 = QRadioButton('add2')
+        radio_two_layout.addWidget(self.radio4)
+
+        self.bg2 = QButtonGroup(self)
+        self.bg2.addButton(self.radio3, 13)
+        self.bg2.addButton(self.radio4, 14)
+
+        self.center_second_vbox.addLayout(radio_two_layout)
+        self.lineEdit4.setText("添加成功")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
