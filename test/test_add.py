@@ -1,6 +1,7 @@
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 import sys
 '''
 Pyqt 动态的添加控件
@@ -16,7 +17,7 @@ class DynAddObject(QDialog):
         self.layout = QGridLayout()
         self.layout.addWidget(addButton, 1, 0)
         self.setLayout(self.layout)
-        self.connect(addButton, SIGNAL("clicked()"), self.add)
+        self.addButton.clicked.connect(self.add)
 
 
     def add(self):
@@ -28,5 +29,4 @@ class DynAddObject(QDialog):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     form = DynAddObject()
-    form.show()
     app.exec_()

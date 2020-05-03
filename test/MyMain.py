@@ -1,6 +1,4 @@
 import sys
-# from PyQt5.QtWidgets import QMainWindow, QTextEdit, QAction, QApplication
-# from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -47,10 +45,15 @@ class Example(QMainWindow):
         ### 表格
         self.tableWidget = QTableWidget()
 
+        ### 单选按钮1
         radio_one_layout = QHBoxLayout()
+
+        label1 = QLabel()
+        label1.setText("抑郁与否")
+        radio_one_layout.addWidget(label1)
+
         self.button1 = QRadioButton('单选按钮1')
         self.button1.setChecked(True)
-
         self.button1.toggled.connect(self.buttonState)
         radio_one_layout.addWidget(self.button1)
 
@@ -58,7 +61,25 @@ class Example(QMainWindow):
         self.button2.toggled.connect(self.buttonState)
         radio_one_layout.addWidget(self.button2)
 
-        btn3 = QPushButton("按钮3")
+
+        ### 复选框
+        check_one_layout = QHBoxLayout()
+
+        self.checkBox1 = QCheckBox('复选框控件1')
+        self.checkBox1.setChecked(True)
+        self.checkBox1.stateChanged.connect(lambda: self.checkboxState(self.checkBox1))
+        check_one_layout.addWidget(self.checkBox1)
+
+        self.checkBox2 = QCheckBox('复选框控件2')
+        self.checkBox2.stateChanged.connect(lambda: self.checkboxState(self.checkBox2))
+        check_one_layout.addWidget(self.checkBox2)
+
+        self.checkBox3 = QCheckBox('半选中')
+        self.checkBox3.stateChanged.connect(lambda: self.checkboxState(self.checkBox3))
+        self.checkBox3.setTristate(True)
+        self.checkBox3.setCheckState(Qt.PartiallyChecked)
+        check_one_layout.addWidget(self.checkBox3)
+
         textEdit = QTextEdit()
 
         ### 底部
@@ -76,7 +97,7 @@ class Example(QMainWindow):
         vbox.addWidget(self.tableWidget)
         vbox.addWidget(textEdit)
         vbox.addLayout(radio_one_layout)
-        vbox.addWidget(btn3)
+        vbox.addLayout(check_one_layout)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
 
@@ -106,13 +127,38 @@ class Example(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.items)
 
         # 设置停靠控件2
-        self.items2 = QDockWidget('Dockable2', self)
-        self.listWidget2 = QListWidget()
-        self.listWidget2.addItem('item1')
-        self.listWidget2.addItem('item2')
-        self.listWidget2.addItem('item3')
+        self.items2 = QDockWidget('添加单选', self)
+        # self.listWidget2 = QListWidget()
+        # self.listWidget2.addItem('item1')
+        # self.listWidget2.addItem('item2')
+        # self.listWidget2.addItem('item3')
 
-        self.items2.setWidget(self.listWidget2)
+        self.tree_one = QTreeWidget()
+
+        self.tree_one.setColumnCount(2)
+
+        self.tree_one.setHeaderLabels(['Key', 'Value'])
+
+        root = QTreeWidgetItem(self.tree_one)
+        root.setText(0, 'root')
+        root.setText(1, '0')
+
+        child1 = QTreeWidgetItem(root)
+        child1.setText(0, 'child1')
+        child1.setText(1, '1')
+
+        child2 = QTreeWidgetItem(root)
+        child2.setText(0, 'child2')
+        child2.setText(1, '2')
+
+        child3 = QTreeWidgetItem(child2)
+        child3.setText(0, 'child3')
+        child3.setText(1, '3')
+        self.tree_one.clicked.connect(self.onTreeClicked)
+
+
+        self.items2.setWidget(self.tree_one)
+
 
         self.items2.setMaximumHeight(200)
 
@@ -122,6 +168,10 @@ class Example(QMainWindow):
         # self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Main window')
         self.show()
+
+    def add(self):
+        widget = QPushButton("1")
+        self.grid.addWidget(widget,1,1)
 
     # 菜单栏活动
     def windowaction(self, q):
@@ -171,6 +221,7 @@ class Example(QMainWindow):
         else:
             pass
 
+    # 单选框状态
     def buttonState(self):
         radioButton = self.sender()
 
@@ -178,6 +229,19 @@ class Example(QMainWindow):
             print('<' + radioButton.text() + '> 被选中')
         else:
             print('<' + radioButton.text() + '> 被取消选中状态')
+
+    # 多选框状态
+    def checkboxState(self,cb):
+        check1Status = self.checkBox1.text() + ', isChecked=' + str(self.checkBox1.isChecked()) + ',checkState=' + str(self.checkBox1.checkState()) + '\n'
+        check2Status = self.checkBox2.text() + ', isChecked=' + str(self.checkBox2.isChecked()) + ',checkState=' + str(self.checkBox2.checkState()) + '\n'
+        check3Status = self.checkBox3.text() + ', isChecked=' + str(self.checkBox3.isChecked()) + ',checkState=' + str(self.checkBox3.checkState()) + '\n'
+        print(check1Status + check2Status + check3Status)
+
+    # 树事件
+    def onTreeClicked(self,index):
+        item = self.tree.currentItem()
+        print(index.row())
+        print('key=%s,value=%s' % (item.text(0),item.text(1)))
 
 
 if __name__ == '__main__':
