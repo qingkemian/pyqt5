@@ -7,7 +7,7 @@ class App(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 file system view - pythonspot.com'
+        self.title = 'PyQt5 file'
         self.left = 10
         self.top = 10
         self.width = 640

@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication
 from PyQt5.QtGui import QIcon
 from test import App
-from demo5_3 import Example
+
 
 class Ex(QMainWindow):
     def __init__(self):
