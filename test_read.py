@@ -11,7 +11,7 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self):
         super(QtWidgets.QMainWindow,self).__init__()
         self.setupUi(self)
-        self.retranslateUi(self)
+        # self.retranslateUi(self)
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
