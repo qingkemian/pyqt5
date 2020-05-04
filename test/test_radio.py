@@ -27,9 +27,10 @@ cs_group.addButton(cs2,2)
 cs_group.addButton(cs3,3)
 cs_group.addButton(cs4,4)
 
+
 # 定义槽函数，并打印接收到的参数
 def slot(object):
-    print("按键被按下了,id 为:", cs_group.id(object))
+    print(cs_group.id(object))
 
 # 连接槽函数，并制定带的参数会 int 类型
 cs_group.buttonClicked.connect(slot)

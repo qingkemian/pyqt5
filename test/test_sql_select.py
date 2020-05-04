@@ -9,9 +9,22 @@ def select():
     query = QSqlQuery()
     query.exec('SELECT * FROM "radio"')
 
-    while (query.next()):  # 判断是否有下一条记录
-        print(query.value(1))
+    j = 1
 
+    alllist = []
+
+    while (query.next()):  # 判断是否有下一条记录
+        mylist = []
+        for i in range(1,8):
+            print(j,i,query.value(i))
+            if query.value(i) != '':
+                mylist.append(query.value(i))
+
+        j += 1
+        alllist.append(mylist)
+
+    print(alllist)
+    print(alllist[1][0])
     db.close()
     return True
 
