@@ -10,26 +10,41 @@ class Example(QMainWindow):
         super().__init__()
         self.initUI()
     def initUI(self):
+
+        # ***************************************顶部*************************************** #
+
         # 菜单栏、工具栏选项
         exitAct = QAction(QIcon('./img/close.ico'), 'Exit', self)
         exitAct.setShortcut('Ctrl+Q')
         exitAct.setStatusTip('Exit application')
         exitAct.triggered.connect(self.close)
+
+        # 状态栏
         self.statusBar()
 
         # 设置菜单栏
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction("Open")
         fileMenu.addAction(exitAct)
-        fileMenu.addAction("New")
-        fileMenu.addAction("cascade")
-        fileMenu.addAction("Tiled")
+
+        settingsMenu = menubar.addMenu("&Settings")
+        settingsMenu.addAction("font")
+        settingsMenu.addAction("color")
+
+        controlsMenu = menubar.addMenu("&Tools")
+        controlsMenu.addAction("clear")
+
+        helpMenu = menubar.addMenu("&Help")
+        helpMenu.addAction("About")
 
         fileMenu.triggered.connect(self.windowaction)
 
         # 设置工具栏
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(exitAct)
+
+        # ***************************************中心*************************************** #
 
         # 设置主窗口的中心窗口的控件
 
@@ -47,56 +62,36 @@ class Example(QMainWindow):
 
         ### 文本框
         textEdit = QTextEdit()
-        # textEdit.setMaximumHeight(500)
-        # textEdit.setMinimumHeight(200)
 
-
+        ### 表格、文本框高度拖拽
         center_splitter_one = QSplitter(Qt.Vertical)
         center_splitter_one.addWidget(self.tableWidget)
         center_splitter_one.addWidget(textEdit)
         center_splitter_one.setFixedHeight(600)
 
-        ### 单选按钮1
-        radio_one_layout = QHBoxLayout()
-
-        label1 = QLabel()
-        label1.setText("抑郁与否")
-        radio_one_layout.addWidget(label1)
-
-        self.radio1 = QRadioButton('单选按钮1')
-        self.radio1.setChecked(True)
-        self.radio1.toggled.connect(self.buttonState)
-        radio_one_layout.addWidget(self.radio1)
-
-        self.radio2 = QRadioButton('单选按钮2')
-        self.radio2.toggled.connect(self.buttonState)
-        radio_one_layout.addWidget(self.radio2)
-
-        self.bg1 = QButtonGroup(self)
-        self.bg1.addButton(self.radio1,11)
-        self.bg1.addButton(self.radio2,12)
-
-
-        ### 复选框
-        check_one_layout = QHBoxLayout()
-
-        self.checkBox1 = QCheckBox('复选框控件1')
-        self.checkBox1.setChecked(True)
-        self.checkBox1.stateChanged.connect(lambda: self.checkboxState(self.checkBox1))
-        check_one_layout.addWidget(self.checkBox1)
-
-        self.checkBox2 = QCheckBox('复选框控件2')
-        self.checkBox2.stateChanged.connect(lambda: self.checkboxState(self.checkBox2))
-        check_one_layout.addWidget(self.checkBox2)
-
-        self.checkBox3 = QCheckBox('半选中')
-        self.checkBox3.stateChanged.connect(lambda: self.checkboxState(self.checkBox3))
-        self.checkBox3.setTristate(True)
-        self.checkBox3.setCheckState(Qt.PartiallyChecked)
-        check_one_layout.addWidget(self.checkBox3)
-
+        ### 单选按钮布局
         self.center_second_vbox = QVBoxLayout()
-
+        #
+        # radio_one_layout = QHBoxLayout()
+        #
+        # label1 = QLabel()
+        # label1.setText("抑郁与否")
+        # radio_one_layout.addWidget(label1)
+        #
+        # self.radio1 = QRadioButton('单选按钮1')
+        # self.radio1.setChecked(True)
+        # self.radio1.toggled.connect(self.buttonState)
+        # radio_one_layout.addWidget(self.radio1)
+        #
+        # self.radio2 = QRadioButton('单选按钮2')
+        # self.radio2.toggled.connect(self.buttonState)
+        # radio_one_layout.addWidget(self.radio2)
+        #
+        # self.bg1 = QButtonGroup(self)
+        # self.bg1.addButton(self.radio1, 11)
+        # self.bg1.addButton(self.radio2, 12)
+        #
+        # self.center_second_vbox.addLayout(radio_one_layout)
 
         ### 底部
         okButton = QPushButton("确定")
@@ -111,8 +106,6 @@ class Example(QMainWindow):
         vbox.addStretch(0)
         vbox.addLayout(hbox_open)
         vbox.addWidget(center_splitter_one)
-        vbox.addLayout(radio_one_layout)
-        vbox.addLayout(check_one_layout)
         vbox.addLayout(self.center_second_vbox)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
@@ -123,8 +116,10 @@ class Example(QMainWindow):
         # self.mdi = QMdiArea()
         self.setCentralWidget(self.mdi)
 
+        # ***************************************左侧*************************************** #
+
         # 设置——左侧——停靠控件1
-        self.pro_items = QDockWidget('Project（别碰 软件会崩）', self)
+        self.pro_items = QDockWidget('Project（别碰 可能会崩）', self)
         self.listWidget = QListWidget()
         self.model = QFileSystemModel()
         self.model.setRootPath('')
@@ -137,43 +132,74 @@ class Example(QMainWindow):
 
         self.pro_items.setWidget(self.tree)
 
-        # self.items.setFloating(True)
-
         self.addDockWidget(Qt.LeftDockWidgetArea, self.pro_items)
 
+        # ***************************************右侧*************************************** #
+
         # 设置——右侧——停靠控件1
-        self.docked2 = QDockWidget('添加单选', self)
+        self.docked2 = QDockWidget('添加单选（标记一格）', self)
 
-        btn_layout = QFormLayout()
-        self.button1 = QPushButton('获取列表中的选项')
-        self.button1.clicked.connect(self.getItem)
-        self.lineEdit1 = QLineEdit()
-        btn_layout.addRow(self.button1, self.lineEdit1)
+        right_first_layout = QFormLayout()
+        self.right_first_button1 = QPushButton('输入单元格所在行')
+        self.right_first_button1.clicked.connect(self.getItem)
+        self.right_first_lineEdit1 = QLineEdit()
+        right_first_layout.addRow(self.right_first_button1, self.right_first_lineEdit1)
 
-        self.button2 = QPushButton('获取字符串')
-        self.button2.clicked.connect(self.getText)
-        self.lineEdit2 = QLineEdit()
-        btn_layout.addRow(self.button2, self.lineEdit2)
+        self.right_first_button2 = QPushButton('输入单元格所在列')
+        self.right_first_button2.clicked.connect(self.getText)
+        self.right_first_lineEdit2 = QLineEdit()
+        right_first_layout.addRow(self.right_first_button2, self.right_first_lineEdit2)
 
-        self.button3 = QPushButton('获取整数')
-        self.button3.clicked.connect(self.getInt)
-        self.lineEdit3 = QLineEdit()
-        btn_layout.addRow(self.button3, self.lineEdit3)
+        self.right_first_button3 = QPushButton('您选择的位置')
+        self.right_first_button3.clicked.connect(self.getInt)
+        self.right_first_lineEdit3 = QLineEdit()
+        right_first_layout.addRow(self.right_first_button3, self.right_first_lineEdit3)
 
-        self.button4 = QPushButton("创建单选按钮")
-        self.button4.clicked.connect(self.newRadio)
-        self.lineEdit4 = QLineEdit()
-        btn_layout.addRow(self.button4,self.lineEdit4)
+        self.right_first_button4 = QPushButton("确认创建")
+        self.right_first_button4.clicked.connect(self.newRadio)
+        self.right_first_lineEdit4 = QLineEdit()
+        right_first_layout.addRow(self.right_first_button4,self.right_first_lineEdit4)
 
         self.addDockWidget(Qt.RightDockWidgetArea,self.docked2)
         self.dockedWidget2 = QWidget(self)
         self.docked2.setWidget(self.dockedWidget2)
-        self.dockedWidget2.setLayout(btn_layout)
+        self.dockedWidget2.setLayout(right_first_layout)
+
+        # 设置——右侧——停靠控件2
+        self.docked3 = QDockWidget('添加单选（标记一列）', self)
+
+        right_second_layout = QFormLayout()
+        self.right_second_button1 = QPushButton('输入标记列')
+        self.right_second_button1.clicked.connect(self.getItem)
+        self.right_second_lineEdit1 = QLineEdit()
+        right_second_layout.addRow(self.right_second_button1, self.right_second_lineEdit1)
+
+        self.right_second_button2 = QPushButton('输入起始行')
+        self.right_second_button2.clicked.connect(self.getText)
+        self.right_second_lineEdit2 = QLineEdit()
+        right_second_layout.addRow(self.right_second_button2, self.right_second_lineEdit2)
+
+        self.right_second_button3 = QPushButton('您的标记将从开始')
+        self.right_second_button3.clicked.connect(self.getInt)
+        self.right_second_lineEdit3 = QLineEdit()
+        right_second_layout.addRow(self.right_second_button3, self.right_second_lineEdit3)
+
+        self.right_second_button4 = QPushButton("确认创建")
+        self.right_second_button4.clicked.connect(self.newRadio)
+        self.right_second_lineEdit4 = QLineEdit()
+        right_second_layout.addRow(self.right_second_button4, self.right_second_lineEdit4)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.docked3)
+        self.dockedWidget3 = QWidget(self)
+        self.docked3.setWidget(self.dockedWidget3)
+        self.dockedWidget3.setLayout(right_second_layout)
 
         # 设置窗口位置
         # self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Main window')
         self.show()
+
+        # ***************************************操作*************************************** #
 
     def add(self):
         widget = QPushButton("1")
@@ -183,16 +209,11 @@ class Example(QMainWindow):
     def windowaction(self, q):
         print(q.text())
         if q.text() == "New":
-            MultiWindows.count = MultiWindows.count + 1
-            sub = QMdiSubWindow()
-            sub.setWidget(QTextEdit())
-            sub.setWindowTitle("子窗口" + str(MultiWindows.count))
-            self.mdi.addSubWindow(sub)
-            sub.show()
+            pass
         elif q.text() == "cascade":
-            self.mdi.cascadeSubWindows()
+            pass
         elif q.text() == "Tiled":
-            self.mdi.tileSubWindows()
+            pass
         else:
             pass
 
@@ -227,21 +248,21 @@ class Example(QMainWindow):
         else:
             pass
 
-    # 单选框状态
-    def buttonState(self):
-        radioButton = self.sender()
-
-        if radioButton.isChecked() == True:
-            print('<' + radioButton.text() + '> 被选中')
-        else:
-            print('<' + radioButton.text() + '> 被取消选中状态')
-
-    # 多选框状态
-    def checkboxState(self,cb):
-        check1Status = self.checkBox1.text() + ', isChecked=' + str(self.checkBox1.isChecked()) + ',checkState=' + str(self.checkBox1.checkState()) + '\n'
-        check2Status = self.checkBox2.text() + ', isChecked=' + str(self.checkBox2.isChecked()) + ',checkState=' + str(self.checkBox2.checkState()) + '\n'
-        check3Status = self.checkBox3.text() + ', isChecked=' + str(self.checkBox3.isChecked()) + ',checkState=' + str(self.checkBox3.checkState()) + '\n'
-        print(check1Status + check2Status + check3Status)
+    # # 单选框状态
+    # def buttonState(self):
+    #     radioButton = self.sender()
+    #
+    #     if radioButton.isChecked() == True:
+    #         print('<' + radioButton.text() + '> 被选中')
+    #     else:
+    #         print('<' + radioButton.text() + '> 被取消选中状态')
+    #
+    # # 多选框状态
+    # def checkboxState(self,cb):
+    #     check1Status = self.checkBox1.text() + ', isChecked=' + str(self.checkBox1.isChecked()) + ',checkState=' + str(self.checkBox1.checkState()) + '\n'
+    #     check2Status = self.checkBox2.text() + ', isChecked=' + str(self.checkBox2.isChecked()) + ',checkState=' + str(self.checkBox2.checkState()) + '\n'
+    #     check3Status = self.checkBox3.text() + ', isChecked=' + str(self.checkBox3.isChecked()) + ',checkState=' + str(self.checkBox3.checkState()) + '\n'
+    #     print(check1Status + check2Status + check3Status)
 
     # 右侧停靠控件事件
     def getItem(self):
@@ -276,7 +297,9 @@ class Example(QMainWindow):
         self.bg2.addButton(self.radio4, 14)
 
         self.center_second_vbox.addLayout(radio_two_layout)
-        self.lineEdit4.setText("添加成功")
+        self.right_first_lineEdit4.setText("添加成功")
+
+        # ***************************************结束*************************************** #
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
