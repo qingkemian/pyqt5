@@ -11,8 +11,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(w)
 
         self.topFiller = QWidget()
-        self.topFiller.setMinimumSize(250, 2000)  #######设置滚动条的尺寸
-        for filename in range(20):
+        self.topFiller.setMinimumSize(250, 500)  #######设置滚动条的尺寸
+        for filename in range(5):
             self.MapButton = QPushButton(self.topFiller)
             self.MapButton.setText(str(filename))
             self.MapButton.move(10, filename * 40)
