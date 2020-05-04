@@ -10,7 +10,7 @@ def select():
     query.exec('SELECT * FROM "radio"')
 
     while (query.next()):  # 判断是否有下一条记录
-        print(query.value(2))
+        print(query.value(1))
 
     db.close()
     return True
